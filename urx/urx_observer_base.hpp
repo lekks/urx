@@ -1,5 +1,5 @@
-﻿#ifndef URX_BASECONNECTOR_H
-#define URX_BASECONNECTOR_H
+﻿#ifndef URX_OBSERVER_BASE_HPP
+#define URX_OBSERVER_BASE_HPP
 
 
 namespace urx {
@@ -79,11 +79,7 @@ namespace urx {
         void remove_all() {}// TODO
     };
 
-
-//*****************************************************
-
-
 }
 
-#endif // PORT_BASE
+#endif // URX_OBSERVER_BASE_HPP
 

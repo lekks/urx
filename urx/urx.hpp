@@ -5,62 +5,9 @@
 #ifndef URX_URX_HPP
 #define URX_URX_HPP
 
-#include "urx_baseconnector.hpp"
+#include "urx_observer.hpp"
+#include "urx_subject.hpp"
 
-namespace urx {
-    template<typename ...T>
-    class Observable;
+#include "urx_poc.hpp"
 
-    template<typename ...T>
-    class Observer : public ObserverBase {
-    public:
-        Observer() = default;
-
-        inline explicit Observer(Observable<T...> &observable) {
-            observable.subscribe(*this);
-        }
-
-        virtual void on_next(const T &...value) {}; //TODO =0
-    };
-
-
-    template<typename ...T>
-    class Observable {
-        ObserversList observers;
-    public:
-        Observable &operator=(Observable &) = delete;
-
-        void subscribe(Observer<T...> &observer) {
-            observers.add(&observer);
-        };
-
-        void unsubscribe(Observer<T...> &observer) {
-            observers.remove(&observer);
-        };
-
-        void next(const T &...value) {
-            for (ObserverBase *conn = observers.first_conn(); conn; conn = observers.next_conn(conn)) {
-                static_cast<Observer<T...> *>(conn)->on_next(value...);
-            }
-        };
-    };
-
-    template<typename ...T>
-    class Subject : public Observer<T...>, public Observable<T...> {
-        virtual void on_next(const T &...value) override {
-            this->next(value...); // https://stackoverflow.com/questions/10639053/name-lookups-in-c-templates
-        };
-    };
-
-    template<typename ...T>
-    class Topic {
-    public:
-        Observable<T...> get_observable() {};
-    };
-
-    template<typename S, typename D>
-    class Convert : public Observable<D>, public Observer<S> {
-    };
-
-}
 #endif //URX_URX_HPP
