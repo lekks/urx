@@ -78,7 +78,3 @@ TEST_CASE("Convert", "[urx]") {
     src.subscribe(cnv);
     cnv.subscribe(dst);
 }
-
-
-
-
