@@ -12,41 +12,59 @@ template<typename T>
 class RegisterValue : public Observer<T> {
     void on_next(const T &val) override {
         last = val;
-        ++counter;
     }
 
 public:
     int last = -1;
+};
+
+template<typename ...T>
+class CounterValue : public Observer<T...> {
+    void on_next(const T& ...) override {
+        ++counter;
+    }
+
+public:
     int counter = 0;
 };
+
+
 
 TEST_CASE("Pass value to subscribers", "[urx]") {
     Observable<int> out;
     RegisterValue<int> in1;
-    RegisterValue<int> in2;
+    CounterValue<int> in2;
     out.subscribe(in1);
     out.subscribe(in2);
     out.next(5);
-    REQUIRE(in1.counter == 1);
     REQUIRE(in1.last == 5);
     REQUIRE(in2.counter == 1);
-    REQUIRE(in2.last == 5);
     out.next(6);
-    REQUIRE(in1.counter == 2);
     REQUIRE(in1.last == 6);
     REQUIRE(in2.counter == 2);
-    REQUIRE(in2.last == 6);
+}
+
+TEST_CASE("Void events", "[urx]") {
+    Observable<> out;
+    CounterValue<> in;
+    out.subscribe(in);
+    out.next();
+    REQUIRE(in.counter == 1);
+    out.next();
+    REQUIRE(in.counter == 2);
 }
 
 TEST_CASE("Subject", "[urx]") {
     Observable<int> src;
     Subject<int> subj;
-    RegisterValue<int> dst;
+    RegisterValue<int> reg;
+    CounterValue<int> cnt;
     src.subscribe(subj);
-    subj.subscribe(dst);
+    subj.subscribe(reg);
+    subj.subscribe(cnt);
     src.next(678);
-    REQUIRE(dst.counter == 1);
-    REQUIRE(dst.last == 678);
+    REQUIRE(cnt.counter == 1);
+    REQUIRE(reg.last == 678);
 }
 
 class StrToInt : public Observable<int>, public Observer<const char *> {
@@ -66,7 +84,6 @@ TEST_CASE("Convert sting to int", "[urx]") {
     str2int.subscribe(dst);
 
     src.next("54");
-    REQUIRE(dst.counter == 1);
     REQUIRE(dst.last == 54);
 }
 
