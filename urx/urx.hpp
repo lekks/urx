@@ -12,7 +12,7 @@ namespace urx {
     class Observable;
 
     template<typename ...T>
-    class Observer : public BaseConnector {
+    class Observer : public ObserverBase {
     public:
         Observer() = default;
 
@@ -26,7 +26,7 @@ namespace urx {
 
     template<typename ...T>
     class Observable {
-        ConnectorList observers;
+        ObserversList observers;
     public:
         Observable &operator=(Observable &) = delete;
 
@@ -39,7 +39,7 @@ namespace urx {
         };
 
         void next(const T &...value) {
-            for (BaseConnector *conn = observers.first_conn(); conn; conn = observers.next_conn(conn)) {
+            for (ObserverBase *conn = observers.first_conn(); conn; conn = observers.next_conn(conn)) {
                 static_cast<Observer<T...> *>(conn)->on_next(value...);
             }
         };

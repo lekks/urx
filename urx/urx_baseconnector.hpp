@@ -4,34 +4,34 @@
 
 namespace urx {
 
-    class ConnectorList;
+    class ObserversList;
 
-    class BaseConnector {
-        friend class ConnectorList;
+    class ObserverBase {
+        friend class ObserversList;
 
-        BaseConnector *next_connector = nullptr;
-        ConnectorList *connectors = nullptr;
+        ObserverBase *next_connector = nullptr;
+        ObserversList *connectors = nullptr;
 
-        BaseConnector &operator=(BaseConnector &) = delete;
+        ObserverBase &operator=(ObserverBase &) = delete;
 
-        BaseConnector(BaseConnector &) = delete;
+        ObserverBase(ObserverBase &) = delete;
 
     public:
-        BaseConnector(BaseConnector &&) = default;
+        ObserverBase(ObserverBase &&) = default;
 
-        BaseConnector() {};
+        ObserverBase() {};
 
-        virtual ~BaseConnector() {}
+        virtual ~ObserverBase() {}
 
         inline bool is_connected() {
             return connectors != nullptr;
         };
     };
 
-    class ConnectorList {
-        BaseConnector *first_connector;
+    class ObserversList {
+        ObserverBase *first_connector;
 
-        static void append_connector(BaseConnector *&dst, BaseConnector *connector) {
+        static void append_connector(ObserverBase *&dst, ObserverBase *connector) {
             if (dst && (dst != connector)) { // рекурсия для поиска дубликатов
                 append_connector(dst->next_connector, connector);
             } else {
@@ -39,7 +39,7 @@ namespace urx {
             }
         };
 
-        static void remove_connector(BaseConnector *&dst, BaseConnector *connector) {
+        static void remove_connector(ObserverBase *&dst, ObserverBase *connector) {
             if (dst) {
                 if (dst == connector) {
                     dst = connector->next_connector;
@@ -51,28 +51,28 @@ namespace urx {
             }
         };
     public:
-        ConnectorList() : first_connector(0) {};
+        ObserversList() : first_connector(0) {};
 
-        ~ConnectorList() {
+        ~ObserversList() {
             remove_all();
         };
 
-        inline BaseConnector *first_conn() const {
+        inline ObserverBase *first_conn() const {
             return first_connector;
         }
 
-        inline BaseConnector *next_conn(BaseConnector *connector) const {
+        inline ObserverBase *next_conn(ObserverBase *connector) const {
             return connector->next_connector;
         }
 
-        void add(BaseConnector *plug) {
+        void add(ObserverBase *plug) {
             if (plug->next_connector)
                 plug->connectors->remove(plug);
             append_connector(first_connector, plug);
             plug->connectors = this;
         };
 
-        void remove(BaseConnector *plug) {
+        void remove(ObserverBase *plug) {
             remove_connector(first_connector, plug);
         };
 
