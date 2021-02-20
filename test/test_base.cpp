@@ -4,13 +4,14 @@
 
 #include <catch2/catch.hpp>
 #include <urx.hpp>
+#include <cstdlib>
 
 using namespace urx;
 
 template<typename T>
 class RegisterValue : public Observer<T> {
-    void on_next(const T& val) override {
-        last=val;
+    void on_next(const T &val) override {
+        last = val;
         ++counter;
     }
 
@@ -37,12 +38,37 @@ TEST_CASE("Pass value to subscribers", "[urx]") {
     REQUIRE(in2.last == 6);
 }
 
-TEST_CASE("Multiple inheritance", "[urx]") {
-    Observer<int> a;
-    Observable<int> b;
-    b.subscribe(a);
+TEST_CASE("Subject", "[urx]") {
+    Observable<int> src;
+    Subject<int> subj;
+    RegisterValue<int> dst;
+    src.subscribe(subj);
+    subj.subscribe(dst);
+    src.next(678);
+    REQUIRE(dst.counter == 1);
+    REQUIRE(dst.last == 678);
 }
 
+class StrToInt : public Observable<int>, public Observer<const char *> {
+public:
+    void on_next(const char *const &value) override {
+        next(atoi(value));
+    }
+
+public:
+};
+
+TEST_CASE("Convert sting to int", "[urx]") {
+    Observable<const char *> src;
+    RegisterValue<int> dst;
+    StrToInt str2int;
+    src.subscribe(str2int);
+    str2int.subscribe(dst);
+
+    src.next("54");
+    REQUIRE(dst.counter == 1);
+    REQUIRE(dst.last == 54);
+}
 
 
 TEST_CASE("Convert", "[urx]") {

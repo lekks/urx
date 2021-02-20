@@ -46,9 +46,9 @@ namespace urx {
     };
 
     template<typename T>
-    class Subject : public Observable<T>, public Observer<T> {
+    class Subject : public Observer<T>, public Observable<T> {
         virtual void on_next(const T &value) override {
-            next(value);
+            this->next(value); // https://stackoverflow.com/questions/10639053/name-lookups-in-c-templates
         };
     };
 
