@@ -11,5 +11,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(test test.cpp)
+set(TEST_FILES
+    test_base.cpp
+)
+
+add_executable(test test.cpp ${TEST_FILES})
 target_link_libraries(test PRIVATE Catch2::Catch2 urx)
