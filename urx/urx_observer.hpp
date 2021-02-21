@@ -30,6 +30,8 @@ namespace urx {
     public:
         Observable &operator=(Observable &) = delete;
 
+        virtual ~Observable() = default;
+
         void subscribe(Observer<T...> &observer) {
             observers.add(&observer);
         };
@@ -46,15 +48,13 @@ namespace urx {
     };
 
     template<typename ...S, typename Dst>
-    Dst& operator>>(Observable<S...> &src, Dst &dst)
-    {
+    Dst &operator>>(Observable<S...> &src, Dst &dst) {
         src.subscribe(dst);
         return dst;
     }
 
     template<typename ...S, typename Dst>
-    Dst& operator | (Observable<S...> &src, Dst &dst)
-    {
+    Dst &operator|(Observable<S...> &src, Dst &dst) {
         src.subscribe(dst);
         return dst;
     }

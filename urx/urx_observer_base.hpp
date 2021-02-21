@@ -11,17 +11,16 @@ namespace urx {
 
         ObserverBase *next_connector = nullptr;
         ObserversList *connectors = nullptr;
-
+    public:
         ObserverBase &operator=(ObserverBase &) = delete;
 
         ObserverBase(ObserverBase &) = delete;
 
-    public:
         ObserverBase(ObserverBase &&) = default;
 
-        ObserverBase() {};
+        ObserverBase() = default;
 
-        virtual ~ObserverBase() {}
+        virtual ~ObserverBase() = default;
 
         inline bool is_connected() {
             return connectors != nullptr;
@@ -51,7 +50,7 @@ namespace urx {
             }
         };
     public:
-        ObserversList() : first_connector(0) {};
+        ObserversList() : first_connector(nullptr) {};
 
         ~ObserversList() {
             remove_all();
@@ -61,7 +60,7 @@ namespace urx {
             return first_connector;
         }
 
-        inline ObserverBase *next_conn(ObserverBase *connector) const {
+        static inline ObserverBase *next_conn(ObserverBase *connector) {
             return connector->next_connector;
         }
 
