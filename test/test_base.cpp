@@ -44,16 +44,6 @@ TEST_CASE("Pass value to subscribers", "[urx]") {
     REQUIRE(in2.counter == 2);
 }
 
-TEST_CASE("Void events", "[urx]") {
-    Observable<> out;
-    CounterValue<> in;
-    out.subscribe(in);
-    out.next();
-    REQUIRE(in.counter == 1);
-    out.next();
-    REQUIRE(in.counter == 2);
-}
-
 TEST_CASE("Subject", "[urx]") {
     Observable<int> src;
     Subject<int> subj;
@@ -67,6 +57,30 @@ TEST_CASE("Subject", "[urx]") {
     REQUIRE(reg.last == 678);
 }
 
+TEST_CASE("Chain operator values", "[urx]") {
+    Observable<int> src;
+    Subject<int> subj;
+    RegisterValue<int> reg;
+    src | subj | reg;
+    src.next(321);
+    REQUIRE(reg.last == 321);
+}
+
+TEST_CASE("Chain operator events", "[urx]") {
+    Observable<> out;
+    Subject<> subj;
+    CounterValue<> in;
+    out >> subj >> in;
+    out.next();
+    REQUIRE(in.counter == 1);
+    out.next();
+    REQUIRE(in.counter == 2);
+}
+
+TEST_CASE("Double subscription", "[urx]") {
+}
+
+
 class StrToInt : public Observable<int>, public Observer<const char *> {
 public:
     void on_next(const char *const &value) override {
@@ -76,12 +90,12 @@ public:
 public:
 };
 
-TEST_CASE("Convert sting to int", "[urx]") {
+TEST_CASE("Convert custom sting to int", "[urx]") {
     Observable<const char *> src;
     RegisterValue<int> dst;
     StrToInt str2int;
-    src.subscribe(str2int);
-    str2int.subscribe(dst);
+
+    src >> str2int >> dst;
 
     src.next("54");
     REQUIRE(dst.last == 54);

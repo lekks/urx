@@ -45,6 +45,20 @@ namespace urx {
         };
     };
 
+    template<typename ...S, typename Dst>
+    Dst& operator>>(Observable<S...> &src, Dst &dst)
+    {
+        src.subscribe(dst);
+        return dst;
+    }
+
+    template<typename ...S, typename Dst>
+    Dst& operator | (Observable<S...> &src, Dst &dst)
+    {
+        src.subscribe(dst);
+        return dst;
+    }
+
 }
 
 #endif //URXLIB_URX_OBSERVER_HPP
