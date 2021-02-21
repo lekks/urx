@@ -5,34 +5,14 @@
 #include <catch2/catch.hpp>
 #include <urx.hpp>
 #include <cstdlib>
+#include "test_observers.hpp"
 
 using namespace urx;
-
-template<typename T>
-class RegisterValue : public Observer<T> {
-    void on_next(const T &val) override {
-        last = val;
-    }
-
-public:
-    int last = -1;
-};
-
-template<typename ...T>
-class CounterValue : public Observer<T...> {
-    void on_next(const T& ...) override {
-        ++counter;
-    }
-
-public:
-    int counter = 0;
-};
-
 
 
 TEST_CASE("Pass value to subscribers", "[urx]") {
     Observable<int> out;
-    RegisterValue<int> in1;
+    LastValue<int> in1;
     CounterValue<int> in2;
     out.subscribe(in1);
     out.subscribe(in2);
@@ -47,7 +27,7 @@ TEST_CASE("Pass value to subscribers", "[urx]") {
 TEST_CASE("Subject", "[urx]") {
     Observable<int> src;
     Subject<int> subj;
-    RegisterValue<int> reg;
+    LastValue<int> reg;
     CounterValue<int> cnt;
     src.subscribe(subj);
     subj.subscribe(reg);
@@ -60,7 +40,7 @@ TEST_CASE("Subject", "[urx]") {
 TEST_CASE("Chain operator values", "[urx]") {
     Observable<int> src;
     Subject<int> subj;
-    RegisterValue<int> reg;
+    LastValue<int> reg;
     src | subj | reg;
     src.next(321);
     REQUIRE(reg.last == 321);
@@ -90,9 +70,9 @@ public:
 public:
 };
 
-TEST_CASE("Convert custom sting to int", "[urx]") {
+TEST_CASE("Test type change", "[urx]") {
     Observable<const char *> src;
-    RegisterValue<int> dst;
+    LastValue<int> dst;
     StrToInt str2int;
 
     src >> str2int >> dst;
@@ -101,11 +81,3 @@ TEST_CASE("Convert custom sting to int", "[urx]") {
     REQUIRE(dst.last == 54);
 }
 
-
-TEST_CASE("Convert", "[urx]") {
-    Observable<const char *> src;
-    Observer<int> dst;
-    Convert<const char *, int> cnv;
-    src.subscribe(cnv);
-    cnv.subscribe(dst);
-}

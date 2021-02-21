@@ -7,13 +7,14 @@ Include(FetchContent)
 FetchContent_Declare(
         Catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG        v2.13.4)
+        GIT_TAG v2.13.4)
 
 FetchContent_MakeAvailable(Catch2)
 
 set(TEST_FILES
-    test_base.cpp
-)
+        test_base.cpp
+        test_functional.cpp
+        )
 
 add_executable(test test.cpp ${TEST_FILES})
 target_link_libraries(test PRIVATE Catch2::Catch2 urx)

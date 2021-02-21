@@ -15,10 +15,6 @@ namespace urx {
         Observable<T...> get_observable() {};
     };
 
-    template<typename S, typename D>
-    class Convert : public Observable<D>, public Observer<S> {
-    };
-
 }
 
 #endif //URXLIB_URX_POC_HPP
