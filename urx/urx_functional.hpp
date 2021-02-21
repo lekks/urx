@@ -11,7 +11,7 @@ namespace urx {
 
     template<typename F, typename ...T>
     class Filter : public Observable<T...>, public Observer<T...> {
-        F predicate;
+        const F predicate;
 
     public:
         Filter(F func) : predicate(func) {};
@@ -25,7 +25,7 @@ namespace urx {
     };
 
     template<typename ...T, typename F>
-    Filter<F, T...> make_filter(const F &func) {
+    Filter<F, T...> make_filter(F&& func) {
         return Filter<F, T...>(func);
     }
 
