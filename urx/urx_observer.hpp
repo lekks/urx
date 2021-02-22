@@ -16,7 +16,7 @@ namespace urx {
     public:
         Observer() = default;
 
-        inline explicit Observer(Observable<T...> &observable) {
+        explicit Observer(Observable<T...> &observable) {
             observable.subscribe(*this);
         }
 
@@ -33,30 +33,30 @@ namespace urx {
         virtual ~Observable() = default;
 
         void subscribe(Observer<T...> &observer) {
-            observers.add(&observer);
+            observers.add_listener(&observer);
         };
 
         void unsubscribe(Observer<T...> &observer) {
-            observers.remove(&observer);
+            observers.remove_listeners(&observer);
         };
 
         void next(const T &...value) {
-            for (ObserverBase *conn = observers.first_conn(); conn; conn = observers.next_conn(conn)) {
+            for (ObserverBase *conn = observers.get_first_listener(); conn; conn = ObserversList::next_conn(conn)) {
                 static_cast<Observer<T...> *>(conn)->on_next(value...);
             }
         };
     };
 
-    template<typename ...S, typename Dst>
-    Dst &operator>>(Observable<S...> &src, Dst &dst) {
-        src.subscribe(dst);
-        return dst;
+    template<typename ...S, typename Observer>
+    Observer &operator>>(Observable<S...> &observable, Observer &observer) {
+        observable.subscribe(observer);
+        return observer;
     }
 
-    template<typename ...S, typename Dst>
-    Dst &operator|(Observable<S...> &src, Dst &dst) {
-        src.subscribe(dst);
-        return dst;
+    template<typename ...S, typename Observer>
+    Observer &operator|(Observable<S...> &observable, Observer &observer) {
+        observable.subscribe(observer);
+        return observer;
     }
 
 }

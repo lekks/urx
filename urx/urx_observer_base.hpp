@@ -9,8 +9,8 @@ namespace urx {
     class ObserverBase {
         friend class ObserversList;
 
-        ObserverBase *next_connector = nullptr;
-        ObserversList *connectors = nullptr;
+        ObserverBase *next_listener = nullptr;
+        ObserversList *listeners = nullptr;
     public:
         ObserverBase &operator=(ObserverBase &) = delete;
 
@@ -20,62 +20,60 @@ namespace urx {
 
         ObserverBase() = default;
 
-        virtual ~ObserverBase() = default;
-
-        inline bool is_connected() {
-            return connectors != nullptr;
+        bool is_connected() {
+            return listeners != nullptr;
         };
     };
 
     class ObserversList {
-        ObserverBase *first_connector;
+        ObserverBase *first_listener;
 
-        static void append_connector(ObserverBase *&dst, ObserverBase *connector) {
-            if (dst && (dst != connector)) { // рекурсия для поиска дубликатов
-                append_connector(dst->next_connector, connector);
+        static void add_listener(ObserverBase *&dst, ObserverBase *listener) {
+            if (dst && (dst != listener)) { // search duplicates
+                add_listener(dst->next_listener, listener);
             } else {
-                dst = connector;
+                dst = listener;
             }
         };
 
-        static void remove_connector(ObserverBase *&dst, ObserverBase *connector) {
+        static void remove_listener(ObserverBase *&dst, ObserverBase *listener) {
             if (dst) {
-                if (dst == connector) {
-                    dst = connector->next_connector;
-                    connector->next_connector = 0;
-                    connector->next_connector = 0;
+                if (dst == listener) {
+                    dst = listener->next_listener;
+                    listener->next_listener = 0;
+                    listener->next_listener = 0;
                 } else {
-                    remove_connector(dst->next_connector, connector);
+                    remove_listener(dst->next_listener, listener);
                 }
             }
         };
     public:
-        ObserversList() : first_connector(nullptr) {};
+        ObserversList() : first_listener(nullptr) {};
 
         ~ObserversList() {
-            remove_all();
+            //TODO remove_all_listeners();
         };
 
-        inline ObserverBase *first_conn() const {
-            return first_connector;
+        inline ObserverBase *get_first_listener() const {
+            return first_listener;
         }
 
-        static inline ObserverBase *next_conn(ObserverBase *connector) {
-            return connector->next_connector;
+        static inline ObserverBase *next_conn(ObserverBase *listener) {
+            return listener->next_listener;
         }
 
-        void add(ObserverBase *plug) {
-            if (plug->next_connector)
-                plug->connectors->remove(plug);
-            append_connector(first_connector, plug);
-            plug->connectors = this;
+        void add_listener(ObserverBase *listener) {
+            if (listener->next_listener)
+                listener->listeners->remove_listeners(listener);
+            add_listener(first_listener, listener);
+            listener->listeners = this;
         };
 
-        void remove(ObserverBase *plug) {
-            remove_connector(first_connector, plug);
+        void remove_listeners(ObserverBase *plug) {
+            remove_listener(first_listener, plug);
         };
 
-        void remove_all() {}// TODO
+        // TODO void remove_all_listeners() {}
     };
 
 }
