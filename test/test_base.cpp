@@ -5,7 +5,7 @@
 #include <catch2/catch.hpp>
 #include <urx.hpp>
 #include <cstdlib>
-#include "test_observers.hpp"
+#include "utils.hpp"
 
 using namespace urx;
 

@@ -2,8 +2,8 @@
 // Created by ldir on 21.02.2021.
 //
 
-#ifndef URXLIB_TEST_OBSERVERS_HPP
-#define URXLIB_TEST_OBSERVERS_HPP
+#ifndef URXLIB_UTILS_HPP
+#define URXLIB_UTILS_HPP
 
 #include <urx.hpp>
 
@@ -28,4 +28,4 @@ public:
 };
 
 
-#endif //URXLIB_TEST_OBSERVERS_HPP
+#endif //URXLIB_UTILS_HPP
