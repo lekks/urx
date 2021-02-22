@@ -11,7 +11,7 @@ static bool is_even(const int &v) {
     return v % 2 == 0;
 }
 
-TEST_CASE("Test", "[urx]") {
+TEST_CASE("Test filter single argument", "[urx]") {
     Observable<int> src;
     int x = 3;
     auto filter1 = make_filter<int>(is_even);
@@ -35,3 +35,21 @@ TEST_CASE("Test", "[urx]") {
 
 }
 
+TEST_CASE("Test filter 2 arguments argument", "[urx]") {
+    Observable<int, int> src;
+    auto filter = make_filter<int, int>([](const int &a, const int &b) -> bool { return a % b == 0; });
+    CounterValue<int, int> cnt;
+    src >> filter >> cnt;
+
+    src.next(1,2);
+    REQUIRE(cnt.counter == 0);
+
+    src.next(2,1);
+    REQUIRE(cnt.counter == 1);
+
+    src.next(3,2);
+    REQUIRE(cnt.counter == 1);
+
+    src.next(4,2);
+    REQUIRE(cnt.counter == 2);
+}

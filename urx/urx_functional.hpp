@@ -29,6 +29,23 @@ namespace urx {
         return Filter<F, T...>(func);
     }
 
+    template<typename F, typename ...T>
+    class Map : public Observable<T...>, public Observer<T...> {
+        const F function;
+
+    public:
+        Map(F func) : function(func) {};
+
+        virtual void on_next(const T &...value) {
+            this->next(function(value...));
+        }
+
+    };
+
+    template<typename ...T, typename F>
+    Map<F, T...> make_map(F&& func) {
+        return Map<F, T...>(func);
+    }
 
 }
 
