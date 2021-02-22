@@ -20,7 +20,7 @@ namespace urx {
             observable.subscribe(*this);
         }
 
-        virtual void on_next(const T &...value) {}; //TODO =0
+        virtual void on_next(const T &...value) = 0;
     };
 
 

@@ -20,12 +20,14 @@ namespace urx {
 
         ObserverBase() = default;
 
+        virtual ~ObserverBase() = default;
+
         bool is_connected() {
             return listeners != nullptr;
         };
     };
 
-    class ObserversList {
+    class ObserversList final {
         ObserverBase *first_listener;
 
         static void add_listener(ObserverBase *&dst, ObserverBase *listener) {
