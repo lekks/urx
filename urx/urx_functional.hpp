@@ -69,6 +69,24 @@ namespace urx {
     }
 
 
+    template<typename F, typename ...S>
+    class Function : public Observer<S...> {
+        const F function;
+
+        virtual void on_next(const S &...value) {
+            function(value...);
+        }
+
+    public:
+        Function(F func) : function(func) {};
+
+    };
+
+    template<typename ...S, typename F>
+    Function<F, S...> make_function(F &&func) {
+        return Function<F, S...>(func);
+    }
+
 }
 
 #endif //URXLIB_URX_FUNCTIONAL_HPP
