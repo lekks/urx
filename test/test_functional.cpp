@@ -65,3 +65,16 @@ TEST_CASE("Test map", "[urx]") {
     REQUIRE(dst.last == 54);
 
 }
+
+TEST_CASE("Test scan", "[urx]") {
+    Observable<float> src;
+    LastValue<int> dst;
+    auto scan = make_scan<float, int>([](const int &accumulator, const float &value)->int { return accumulator+value; }, 13);
+    src >> scan >> dst;
+
+    src.next(0);
+    REQUIRE(dst.last == 13);
+
+    src.next(5);
+    REQUIRE(dst.last == 18);
+}

@@ -47,6 +47,28 @@ namespace urx {
         return Map<F, S, D>(func);
     }
 
+
+    template<typename F, typename S, typename D>
+    class Scan : public Observer<S>, public Observable<D> {
+        const F function;
+        D accumulator;
+
+    public:
+        Scan(F func, const D &initial) : function(func), accumulator(initial) {};
+
+        virtual void on_next(const S &value) {
+            accumulator = function(accumulator, value);
+            this->next(accumulator);
+        }
+
+    };
+
+    template<typename S, typename D, typename F>
+    Scan<F, S, D> make_scan(F &&func, const D &initial) {
+        return Scan<F, S, D>(func, initial);
+    }
+
+
 }
 
 #endif //URXLIB_URX_FUNCTIONAL_HPP

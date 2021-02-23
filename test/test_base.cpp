@@ -9,6 +9,12 @@
 
 using namespace urx;
 
+TEST_CASE("Empty observable", "[urx]") {
+    Observable<int> out;
+    out.next(5);
+}
+
+
 
 TEST_CASE("Pass value to subscribers", "[urx]") {
     Observable<int> out;
