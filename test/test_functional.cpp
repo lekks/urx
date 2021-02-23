@@ -4,6 +4,7 @@
 
 #include <catch2/catch.hpp>
 #include "utils.hpp"
+#include <cstdlib>
 
 using namespace urx;
 
@@ -52,4 +53,15 @@ TEST_CASE("Test filter 2 arguments argument", "[urx]") {
 
     src.next(4,2);
     REQUIRE(cnt.counter == 2);
+}
+
+TEST_CASE("Test map", "[urx]") {
+    Observable<const char *> src;
+    LastValue<int> dst;
+    auto map = make_map<const char *, int>([](const char *const &value)->int { return atoi(value); });
+    src >> map >> dst;
+
+    src.next("54");
+    REQUIRE(dst.last == 54);
+
 }

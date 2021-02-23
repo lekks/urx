@@ -24,22 +24,18 @@ TEST_CASE("Pass value to subscribers", "[urx]") {
     REQUIRE(in2.counter == 2);
 }
 
-TEST_CASE("Subject", "[urx]") {
-    Observable<int> src;
-    Subject<int> subj;
-    LastValue<int> reg;
-    CounterValue<int> cnt;
-    src.subscribe(subj);
-    subj.subscribe(reg);
-    subj.subscribe(cnt);
-    src.next(678);
-    REQUIRE(cnt.counter == 1);
-    REQUIRE(reg.last == 678);
-}
+
+template<typename ...T>
+class Link : public Observer<T...>, public Observable<T...> {
+public:
+    void on_next(const T &...value) override {
+        this->next(value...);
+    };
+};
 
 TEST_CASE("Chain operator values", "[urx]") {
     Observable<int> src;
-    Subject<int> subj;
+    Link<int> subj;
     LastValue<int> reg;
     src | subj | reg;
     src.next(321);
@@ -48,7 +44,7 @@ TEST_CASE("Chain operator values", "[urx]") {
 
 TEST_CASE("Chain operator events", "[urx]") {
     Observable<> out;
-    Subject<> subj;
+    Link<> subj;
     CounterValue<> in;
     out >> subj >> in;
     out.next();

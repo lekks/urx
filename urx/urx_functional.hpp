@@ -17,7 +17,7 @@ namespace urx {
         Filter(F func) : predicate(func) {};
 
         virtual void on_next(const T &...value) {
-            if(predicate(value...)) {
+            if (predicate(value...)) {
                 this->next(value...);
             }
         }
@@ -25,26 +25,26 @@ namespace urx {
     };
 
     template<typename ...T, typename F>
-    Filter<F, T...> make_filter(F&& func) {
+    Filter<F, T...> make_filter(F &&func) {
         return Filter<F, T...>(func);
     }
 
-    template<typename F, typename ...T>
-    class Map : public Observable<T...>, public Observer<T...> {
+    template<typename F, typename S, typename D>
+    class Map : public Observer<S>, public Observable<D> {
         const F function;
 
     public:
         Map(F func) : function(func) {};
 
-        virtual void on_next(const T &...value) {
-            this->next(function(value...));
+        virtual void on_next(const S &value) {
+            this->next(function(value));
         }
 
     };
 
-    template<typename ...T, typename F>
-    Map<F, T...> make_map(F&& func) {
-        return Map<F, T...>(func);
+    template<typename S, typename D, typename F>
+    Map<F, S, D> make_map(F &&func) {
+        return Map<F, S, D>(func);
     }
 
 }
