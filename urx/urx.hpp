@@ -8,6 +8,7 @@
 #include "urx_observer.hpp"
 #include "urx_subject.hpp"
 #include "urx_functional.hpp"
+#include "urx_combinig.hpp"
 
 #include "urx_poc.hpp"
 

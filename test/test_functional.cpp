@@ -72,9 +72,9 @@ TEST_CASE("Test scan", "[urx]") {
     auto scan = make_scan<float, int>([](const int &accumulator, const float &value)->int { return accumulator+value; }, 13);
     src >> scan >> dst;
 
-    src.next(0);
+    src.next(0.5);
     REQUIRE(dst.last == 13);
 
-    src.next(5);
+    src.next(5.7);
     REQUIRE(dst.last == 18);
 }

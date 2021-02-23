@@ -15,6 +15,7 @@ set(TEST_FILES
         test_base.cpp
         test_functional.cpp
         test_subject.cpp
+        test_combining.cpp
         )
 
 add_executable(test test.cpp ${TEST_FILES})

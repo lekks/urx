@@ -13,7 +13,6 @@ namespace urx {
 
     template<typename ...T>
     class Observer : public ObserverBase {
-        friend class Observable<T...>;
         virtual void on_next(const T &...value) = 0;
 
     public:
@@ -21,6 +20,10 @@ namespace urx {
 
         explicit Observer(Observable<T...> &observable) {
             observable.subscribe(*this);
+        }
+
+        inline void call_next(const T&...value) {
+            on_next(value...);
         }
 
     };
@@ -44,7 +47,7 @@ namespace urx {
 
         void next(const T &...value) {
             for (ObserverBase *conn = observers.get_first_listener(); conn; conn = ObserversList::next_conn(conn)) {
-                static_cast<Observer<T...> *>(conn)->on_next(value...);
+                static_cast<Observer<T...> *>(conn)->call_next(value...);
             }
         };
     };
