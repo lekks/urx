@@ -14,6 +14,7 @@ class LastValue : public urx::Observer<T> {
     }
 
 public:
+    using urx::Observer<T>::Observer;
     T last = -1;
 };
 
@@ -24,6 +25,7 @@ class CounterValue : public urx::Observer<T...> {
     }
 
 public:
+    using urx::Observer<T...>::Observer;
     int counter = 0;
 };
 

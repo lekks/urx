@@ -9,12 +9,6 @@
 
 namespace urx {
 
-    template<typename ...T>
-    class Topic {
-    public:
-        Observable<T...> get_observable() {};
-    };
-
 }
 
 #endif //URXLIB_URX_POC_HPP

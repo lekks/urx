@@ -9,12 +9,13 @@
 
 using namespace urx;
 
-TEST_CASE("Empty observable", "[urx]") {
+TEST_CASE("No connection", "[urx]") {
     Observable<int> out;
+    LastValue<int> in;
     out.next(5);
+    REQUIRE(in.last == -1);
+    REQUIRE(in.is_connected() == false);
 }
-
-
 
 TEST_CASE("Pass value to subscribers", "[urx]") {
     Observable<int> out;

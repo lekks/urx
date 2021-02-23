@@ -34,7 +34,7 @@ TEST_CASE("Test subject", "[urx]") {
 
 }
 
-TEST_CASE("Test subject getters", "[urx]") {
+TEST_CASE("Subject getters", "[urx]") {
     Observable<int> src;
     Subject<int> subject;
     LastValue<int> dst;
@@ -47,4 +47,13 @@ TEST_CASE("Test subject getters", "[urx]") {
     REQUIRE(dst.last == 2);
     src.next(3);
     REQUIRE(dst.last == 3);
+}
+
+TEST_CASE("Subscribe on ctor", "[urx]") {
+    Observable<int> out;
+    Subject<int> subject(out);
+    LastValue<int> in(subject);
+    out.next(5);
+    REQUIRE(in.last == 5);
+    REQUIRE(in.is_connected() == true);
 }
