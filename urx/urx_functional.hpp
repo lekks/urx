@@ -49,7 +49,7 @@ namespace urx {
 
 
     template<typename F, typename S, typename D>
-    class Scan : public Observer<S>, public Observable<D> {
+    class Reduce : public Observer<S>, public Observable<D> {
         const F function;
         D accumulator;
 
@@ -59,13 +59,15 @@ namespace urx {
         }
 
     public:
-        Scan(F func, const D &initial) : function(func), accumulator(initial) {};
-
+        Reduce(F func, const D &initial) : function(func), accumulator(initial) {};
+        const D& get() const {
+            return accumulator;
+        }
     };
 
     template<typename S, typename D, typename F>
-    Scan<F, S, D> make_scan(F &&func, const D &initial) {
-        return Scan<F, S, D>(func, initial);
+    Reduce<F, S, D> make_scan(F &&func, const D &initial) {
+        return Reduce<F, S, D>(func, initial);
     }
 
 

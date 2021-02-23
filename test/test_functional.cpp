@@ -66,18 +66,20 @@ TEST_CASE("Test map", "[urx]") {
 
 }
 
-TEST_CASE("Test scan", "[urx]") {
+TEST_CASE("Test reduce", "[urx]") {
     Observable<float> src;
     LastValue<int> dst;
-    auto scan = make_scan<float, int>(
+    auto reduce = make_scan<float, int>(
             [](const int &accumulator, const float &value) -> int { return accumulator + value; }, 13);
-    src >> scan >> dst;
+    src >> reduce >> dst;
 
     src.next(0.5);
     REQUIRE(dst.last == 13);
 
     src.next(5.7);
     REQUIRE(dst.last == 18);
+
+    REQUIRE(reduce.get() == 18);
 }
 
 
