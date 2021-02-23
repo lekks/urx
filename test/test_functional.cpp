@@ -94,3 +94,17 @@ TEST_CASE("Test function 2 arguments", "[urx]") {
     src.next(2, 3);
     REQUIRE(accum == 8);
 }
+
+TEST_CASE("Test function no arguments", "[urx]") {
+
+    int counter = 0;
+    Observable<> src;
+    auto func = make_function<>([&counter]() { counter += 1; });
+    src >> func;
+
+    src.next();
+    REQUIRE(counter == 1);
+
+    src.next();
+    REQUIRE(counter == 2);
+}
