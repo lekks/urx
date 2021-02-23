@@ -11,17 +11,19 @@ namespace urx {
 
     template<typename ...T>
     class Subject : public Observer<T...>, public Observable<T...> {
-    public:
-        using urx::Observer<T...>::Observer;
+
         void on_next(const T &...value) override {
             this->next(value...);
         };
 
-        Observable<T...>& get_observable() {
+    public:
+        using urx::Observer<T...>::Observer;
+
+        Observable<T...> &get_observable() {
             return *this;
         }
 
-        Observer<T...>& get_observer() {
+        Observer<T...> &get_observer() {
             return *this;
         }
 

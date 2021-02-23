@@ -13,6 +13,9 @@ namespace urx {
 
     template<typename ...T>
     class Observer : public ObserverBase {
+        friend class Observable<T...>;
+        virtual void on_next(const T &...value) = 0;
+
     public:
         Observer() = default;
 
@@ -20,7 +23,6 @@ namespace urx {
             observable.subscribe(*this);
         }
 
-        virtual void on_next(const T &...value) = 0;
     };
 
 

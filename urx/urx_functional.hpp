@@ -13,14 +13,14 @@ namespace urx {
     class Filter : public Observable<T...>, public Observer<T...> {
         const F predicate;
 
-    public:
-        Filter(F func) : predicate(func) {};
-
         virtual void on_next(const T &...value) {
             if (predicate(value...)) {
                 this->next(value...);
             }
         }
+
+    public:
+        Filter(F func) : predicate(func) {};
 
     };
 
@@ -33,12 +33,12 @@ namespace urx {
     class Map : public Observer<S>, public Observable<D> {
         const F function;
 
-    public:
-        Map(F func) : function(func) {};
-
         virtual void on_next(const S &value) {
             this->next(function(value));
         }
+
+    public:
+        Map(F func) : function(func) {};
 
     };
 
@@ -53,13 +53,13 @@ namespace urx {
         const F function;
         D accumulator;
 
-    public:
-        Scan(F func, const D &initial) : function(func), accumulator(initial) {};
-
         virtual void on_next(const S &value) {
             accumulator = function(accumulator, value);
             this->next(accumulator);
         }
+
+    public:
+        Scan(F func, const D &initial) : function(func), accumulator(initial) {};
 
     };
 
