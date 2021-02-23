@@ -16,9 +16,9 @@ namespace urx {
     public:
         Filter(F func) : predicate(func) {};
 
-        virtual void on_next(const T &...value) {
+        virtual void on_next(T &&...value) {
             if (predicate(value...)) {
-                this->next(value...);
+                this->next(std::forward<T>(value)...);
             }
         }
 
@@ -36,7 +36,7 @@ namespace urx {
     public:
         Map(F func) : function(func) {};
 
-        virtual void on_next(const S &value) {
+        virtual void on_next(S &&value) {
             this->next(function(value));
         }
 

@@ -9,7 +9,7 @@
 
 template<typename T>
 class LastValue : public urx::Observer<T> {
-    void on_next(const T &val) override {
+    void on_next(T &&val) override {
         last = val;
     }
 
@@ -19,7 +19,7 @@ public:
 
 template<typename ...T>
 class CounterValue : public urx::Observer<T...> {
-    void on_next(const T &...) override {
+    void on_next(T &&...) override {
         ++counter;
     }
 

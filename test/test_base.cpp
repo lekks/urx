@@ -28,8 +28,8 @@ TEST_CASE("Pass value to subscribers", "[urx]") {
 template<typename ...T>
 class Link : public Observer<T...>, public Observable<T...> {
 public:
-    void on_next(const T &...value) override {
-        this->next(value...);
+    void on_next(T &&...value) override {
+        this->next(std::forward<T>(value)...);
     };
 };
 
@@ -59,8 +59,8 @@ TEST_CASE("Double subscription", "[urx]") {
 
 class StrToInt : public Observable<int>, public Observer<const char *> {
 public:
-    void on_next(const char *const &value) override {
-        next(atoi(value));
+    void on_next(const char * &&value) override {
+        this->next(atoi(value));
     }
 
 public:

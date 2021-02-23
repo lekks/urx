@@ -12,8 +12,8 @@ namespace urx {
     template<typename ...T>
     class Subject : public Observer<T...>, public Observable<T...> {
     public:
-        void on_next(const T &...value) override {
-            this->next(value...);
+        void on_next(T &&...value) override {
+            this->next(std::forward<T>(value)...);
         };
 
         Observable<T...>& get_observable() {
