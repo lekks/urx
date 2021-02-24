@@ -29,12 +29,12 @@ namespace urx {
         return Filter<F, T...>(func);
     }
 
-    template<typename F, typename S, typename D>
-    class Map : public Observer<S>, public Observable<D> {
+    template<typename F, typename D, typename ...S>
+    class Map : public Observable<D>, public Observer<S...>  {
         const F function;
 
-        virtual void on_next(const S &value) {
-            this->next(function(value));
+        virtual void on_next(const S &...value) {
+            this->next(function(value...));
         }
 
     public:
@@ -42,19 +42,19 @@ namespace urx {
 
     };
 
-    template<typename S, typename D, typename F>
-    Map<F, S, D> make_map(F &&func) {
-        return Map<F, S, D>(func);
+    template<typename D, typename ...S, typename F>
+    Map<F, D, S...> make_map(F &&func) {
+        return Map<F, D, S...>(func);
     }
 
 
-    template<typename F, typename S, typename D>
-    class Reduce : public Observer<S>, public Observable<D> {
+    template<typename F, typename D, typename ...S>
+    class Reduce : public Observable<D>, public Observer<S...> {
         const F function;
         D accumulator;
 
-        virtual void on_next(const S &value) {
-            accumulator = function(accumulator, value);
+        virtual void on_next(const S &...value) {
+            accumulator = function(accumulator, value...);
             this->next(accumulator);
         }
 
@@ -65,9 +65,9 @@ namespace urx {
         }
     };
 
-    template<typename S, typename D, typename F>
-    Reduce<F, S, D> make_scan(F &&func, const D &initial) {
-        return Reduce<F, S, D>(func, initial);
+    template<typename D, typename ...S, typename F>
+    Reduce<F, D, S...> make_reduce(F &&func, const D &initial) {
+        return Reduce<F, D, S...>(func, initial);
     }
 
 

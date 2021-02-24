@@ -56,30 +56,40 @@ TEST_CASE("Test filter 2 arguments", "[urx]") {
 }
 
 TEST_CASE("Test map", "[urx]") {
-    Observable<const char *> src;
+    Observable<const char *, bool> src;
     LastValue<int> dst;
-    auto map = make_map<const char *, int>([](const char *const &value) -> int { return atoi(value); });
+    auto map = make_map<int, const char *, bool>(
+            [](const char *const &value, const bool &flag) -> int { return flag ? atoi(value) : -1; });
     src >> map >> dst;
 
-    src.next("54");
+    src.next("54", true);
     REQUIRE(dst.last == 54);
+    src.next("55", false);
+    REQUIRE(dst.last == -1);
 
 }
 
 TEST_CASE("Test reduce", "[urx]") {
-    Observable<float> src;
+    Observable<float, bool> src;
     LastValue<int> dst;
-    auto reduce = make_scan<float, int>(
-            [](const int &accumulator, const float &value) -> int { return accumulator + value; }, 13);
+    auto reduce = make_reduce<int, float, bool>(
+            [](const int &accumulator, const float &value, const bool &flag) -> int {
+                return accumulator + value + (flag ? 1 : 0);
+            },
+            13
+    );
     src >> reduce >> dst;
 
-    src.next(0.5);
-    REQUIRE(dst.last == 13);
+    src.next(0.5, true);
+    REQUIRE(dst.last == 14);
 
-    src.next(5.7);
-    REQUIRE(dst.last == 18);
+    src.next(8.5, false);
+    REQUIRE(dst.last == 22);
 
-    REQUIRE(reduce.get() == 18);
+    src.next(5.7, true);
+    REQUIRE(dst.last == 28);
+
+    REQUIRE(reduce.get() == 28);
 }
 
 
