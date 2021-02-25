@@ -17,6 +17,7 @@ set(TEST_FILES
         test_subject.cpp
         test_combining.cpp
         test_buffers.cpp
+        test_ring_buffer.cpp
         )
 
 add_executable(test test.cpp ${TEST_FILES})

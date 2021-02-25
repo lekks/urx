@@ -5,6 +5,8 @@
 #ifndef URXLIB_URX_BUFFERS_HPP
 #define URXLIB_URX_BUFFERS_HPP
 
+#include "urx_observer.hpp"
+
 namespace urx {
 
     template<typename T>

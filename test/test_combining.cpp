@@ -3,6 +3,7 @@
 //
 
 #include <catch2/catch.hpp>
+#include <urx.hpp>
 #include "utils.hpp"
 #include <cstdlib>
 
