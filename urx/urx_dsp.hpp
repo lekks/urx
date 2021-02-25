@@ -11,6 +11,7 @@ namespace urx {
 
     /* To Implement:
      * Distinct filter
+     * Resample with averaging
      * Transform (multiply on matrix or polynom)
      * Exponential filter
      * Window average

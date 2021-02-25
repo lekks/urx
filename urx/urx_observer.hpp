@@ -5,7 +5,7 @@
 #ifndef URXLIB_URX_OBSERVER_HPP
 #define URXLIB_URX_OBSERVER_HPP
 
-#include "urx_observer_base.hpp"
+#include "urx_observers_list.hpp"
 
 namespace urx {
     template<typename ...T>
@@ -24,6 +24,10 @@ namespace urx {
 
         inline void call_next(const T&...value) {
             on_next(value...);
+        }
+
+        inline Observer<T...> &get_observer() {
+            return *this;
         }
 
     };
@@ -50,6 +54,11 @@ namespace urx {
                 static_cast<Observer<T...> *>(conn)->call_next(value...);
             }
         };
+
+        inline Observable<T...> &get_observable() {
+            return *this;
+        }
+
     };
 
     template<typename ...S, typename Observer>

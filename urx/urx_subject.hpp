@@ -19,14 +19,6 @@ namespace urx {
     public:
         using urx::Observer<T...>::Observer;
 
-        Observable<T...> &get_observable() {
-            return *this;
-        }
-
-        Observer<T...> &get_observer() {
-            return *this;
-        }
-
     };
 
 }
