@@ -30,9 +30,9 @@ namespace urx {
         }
     };
 
-    template<int SIZE, typename T>
-    class FifoBuffer : public Observer<T> {
-        RingBuffer<SIZE, T> ring;
+    template<int SIZE, typename T, class BufferType>
+    class BasicFifoBuffer : public Observer<T> {
+        BufferType ring;
 
         void on_next(const T &val) override {
             ring.put(val);
@@ -54,6 +54,8 @@ namespace urx {
         int get_size() const { return SIZE; }
     };
 
+    template<int SIZE, typename T>
+    using FifoBuffer = BasicFifoBuffer<SIZE, T, RingBuffer<SIZE, T>>;
 };
 
 
