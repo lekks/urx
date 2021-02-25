@@ -41,9 +41,9 @@ namespace urx {
     public:
         using Observer<T>::Observer;
 
-        inline bool is_empty() const { return !ring.have_data(); }
+        inline bool is_empty() const { return ring.is_empty(); }
 
-        inline bool is_full() const { return !ring.have_space(); }
+        inline bool is_full() const { return ring.is_full(); }
 
         inline bool take(T *val) { return ring.get(val); }
 

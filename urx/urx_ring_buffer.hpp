@@ -23,41 +23,44 @@ namespace urx {
     public:
         int get_size() const { return SIZE; }
 
-        bool have_data() const {
-            return (read_index != write_index);
+        bool is_empty() const {
+            return (read_index == write_index);
         }
 
-        bool have_space() const {
-            return (next(write_index) != read_index);
+        bool is_full() const {
+            return (next(write_index) == read_index);
         }
 
         bool put(const T &value) {
-            if (have_space()) {
+            if (is_full()) {
+                return false;
+            } else {
                 buffer[write_index] = value;
                 write_index = next(write_index);
                 return true;
-            } else
-                return false;
+            }
         }
 
         bool get(T *value) {
-            if (have_data()) {
+            if (is_empty()) {
+                return false;
+            } else {
                 *value = buffer[read_index];
                 read_index = next(read_index);
                 return true;
-            } else
-                return false;
+            }
         }
 
         T *front() {
-            if (have_data()) {
-                return &buffer[read_index];
-            } else
+            if (is_empty()) {
                 return 0;
+            } else {
+                return &buffer[read_index];
+            }
         }
 
         void pop() {
-            if (have_data()) {
+            if (!is_empty()) {
                 read_index = next(read_index);
             }
         }

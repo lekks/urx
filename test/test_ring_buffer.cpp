@@ -13,9 +13,9 @@ TEST_CASE("Test ring buffer size 1", "[urx]") {
     RingBuffer<1, int> buf;
     int val;
     for (int i = 0; i < 7; i++) {
-        REQUIRE_FALSE(buf.have_data());
+        REQUIRE(buf.is_empty());
         buf.put(i);
-        REQUIRE(buf.have_data());
+        REQUIRE_FALSE(buf.is_empty());
         buf.put(i + 1);
         REQUIRE(buf.get(&val));
         REQUIRE(val == i);
@@ -27,21 +27,24 @@ TEST_CASE("Test ring buffer size 2", "[urx]") {
     RingBuffer<2, int> buf;
     int val;
     for (int j = 0; j < 7; ++j) {
-        REQUIRE_FALSE(buf.have_data());
+        REQUIRE(buf.is_empty());
+        REQUIRE_FALSE(buf.is_full());
         buf.put(j);
         buf.put(j + 1);
         buf.put(j + 2);
-        REQUIRE(buf.have_data());
+        REQUIRE(buf.is_full());
+        REQUIRE_FALSE(buf.is_empty());
         REQUIRE(buf.get(&val));
         REQUIRE(val == j);
         buf.put(j + 3);
         buf.put(j + 4);
+        REQUIRE(buf.is_full());
         REQUIRE(buf.get(&val));
         REQUIRE(val == j + 1);
-        REQUIRE(buf.have_data());
+        REQUIRE_FALSE(buf.is_empty());
         REQUIRE(buf.get(&val));
         REQUIRE(val == j + 3);
-        REQUIRE_FALSE(buf.have_data());
+        REQUIRE(buf.is_empty());
     }
 }
 
@@ -61,13 +64,13 @@ TEMPLATE_TEST_CASE("Test ring buffer different sizes", "[urx]",
     while (x < count) {
         int iter = rand() % (buf.get_size()) + 1;
 
-        REQUIRE_FALSE(buf.have_data());
+        REQUIRE(buf.is_empty());
         for (j = 0; j < iter; ++j) {
             buf.put(x++);
         }
 
         for (; j > 0; --j) {
-            REQUIRE(buf.have_data());
+            REQUIRE_FALSE(buf.is_empty());
             if (j % 2) {
                 t = *buf.front();
                 buf.pop();
@@ -77,6 +80,6 @@ TEMPLATE_TEST_CASE("Test ring buffer different sizes", "[urx]",
             REQUIRE(t == y++);
         }
         REQUIRE_FALSE(buf.get(&t));
-        REQUIRE_FALSE(buf.have_data());
+        REQUIRE(buf.is_empty());
     }
 }
