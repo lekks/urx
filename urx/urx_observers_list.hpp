@@ -42,8 +42,8 @@ namespace urx {
             if (dst) {
                 if (dst == listener) {
                     dst = listener->next_listener;
-                    listener->next_listener = 0;
-                    listener->next_listener = 0;
+                    listener->next_listener = nullptr;
+                    listener->listeners = nullptr;
                 } else {
                     remove_listener(dst->next_listener, listener);
                 }
@@ -65,14 +65,14 @@ namespace urx {
         }
 
         void add_listener(ObserverBase *listener) {
-            if (listener->next_listener)
+            if (listener->listeners)
                 listener->listeners->remove_listeners(listener);
             add_listener(first_listener, listener);
             listener->listeners = this;
         };
 
-        void remove_listeners(ObserverBase *plug) {
-            remove_listener(first_listener, plug);
+        void remove_listeners(ObserverBase *listener) {
+            remove_listener(first_listener, listener);
         };
 
         // TODO void remove_all_listeners() {}

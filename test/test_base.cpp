@@ -60,9 +60,25 @@ TEST_CASE("Chain operator events", "[urx]") {
     REQUIRE(in.counter == 2);
 }
 
-TEST_CASE("Double subscription", "[urx]") {
+TEST_CASE("Resubscribe subscription", "[urx]") {
+    Observable<int> src1;
+    Observable<int> src2;
+    LastValue<int> dst;
+    src1.subscribe(dst);
+    src1.emit(1);
+    REQUIRE(dst.last == 1);
+    src1.unsubscribe(dst);
+    src1.emit(2);
+    REQUIRE(dst.last == 1);
+    src1.subscribe(dst);
+    src1.emit(3);
+    REQUIRE(dst.last == 3);
+    src2.subscribe(dst);
+    src1.emit(5);
+    REQUIRE(dst.last == 3);
+    src2.emit(6);
+    REQUIRE(dst.last == 6);
 }
-
 
 class StrToInt : public Observable<int>, public Observer<const char *> {
 public:

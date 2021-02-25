@@ -49,6 +49,20 @@ TEST_CASE("Subject getters", "[urx]") {
     REQUIRE(dst.last == 3);
 }
 
+TEST_CASE("Subject emit", "[urx]") {
+    Observable<int> src;
+    Subject<int> subject;
+    LastValue<int> dst;
+    src >> subject >> dst;
+
+    src.emit(1);
+    REQUIRE(dst.last == 1);
+    subject.emit(2);
+    REQUIRE(dst.last == 2);
+    subject.next(3);
+    REQUIRE(dst.last == 3);
+}
+
 TEST_CASE("Subscribe on ctor", "[urx]") {
     Observable<int> out;
     Subject<int> subject(out);
