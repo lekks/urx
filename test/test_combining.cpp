@@ -19,8 +19,8 @@ TEST_CASE("Merge ", "[urx]") {
     src2 >> merge.input(1);
     merge >> dst;
 
-    src1.next(1);
+    src1.emit(1);
     REQUIRE(dst.last == 1);
-    src2.next(2);
+    src2.emit(2);
     REQUIRE(dst.last == 2);
 }

@@ -13,7 +13,7 @@ namespace urx {
     class Subject : public Observer<T...>, public Observable<T...> {
 
         void on_next(const T &...value) override {
-            this->next(value...);
+            this->emit(value...);
         };
 
     public:

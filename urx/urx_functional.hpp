@@ -15,7 +15,7 @@ namespace urx {
 
         virtual void on_next(const T &...value) {
             if (predicate(value...)) {
-                this->next(value...);
+                this->emit(value...);
             }
         }
 
@@ -34,7 +34,7 @@ namespace urx {
         const F function;
 
         virtual void on_next(const S &...value) {
-            this->next(function(value...));
+            this->emit(function(value...));
         }
 
     public:
@@ -55,7 +55,7 @@ namespace urx {
 
         virtual void on_next(const S &...value) {
             accumulator = function(accumulator, value...);
-            this->next(accumulator);
+            this->emit(accumulator);
         }
 
     public:

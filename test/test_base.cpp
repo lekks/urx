@@ -12,7 +12,7 @@ using namespace urx;
 TEST_CASE("No connection", "[urx]") {
     Observable<int> out;
     LastValue<int> in;
-    out.next(5);
+    out.emit(5);
     REQUIRE(in.last == -1);
     REQUIRE(in.is_connected() == false);
 }
@@ -23,10 +23,10 @@ TEST_CASE("Pass value to subscribers", "[urx]") {
     CounterValue<int> in2;
     out.subscribe(in1);
     out.subscribe(in2);
-    out.next(5);
+    out.emit(5);
     REQUIRE(in1.last == 5);
     REQUIRE(in2.counter == 1);
-    out.next(6);
+    out.emit(6);
     REQUIRE(in1.last == 6);
     REQUIRE(in2.counter == 2);
 }
@@ -36,7 +36,7 @@ template<typename ...T>
 class Link : public Observer<T...>, public Observable<T...> {
 public:
     void on_next(const T &...value) override {
-        this->next(value...);
+        this->emit(value...);
     };
 };
 
@@ -45,7 +45,7 @@ TEST_CASE("Chain operator values", "[urx]") {
     Link<int> subj;
     LastValue<int> reg;
     src | subj | reg;
-    src.next(321);
+    src.emit(321);
     REQUIRE(reg.last == 321);
 }
 
@@ -54,9 +54,9 @@ TEST_CASE("Chain operator events", "[urx]") {
     Link<> subj;
     CounterValue<> in;
     out >> subj >> in;
-    out.next();
+    out.emit();
     REQUIRE(in.counter == 1);
-    out.next();
+    out.emit();
     REQUIRE(in.counter == 2);
 }
 
@@ -67,7 +67,7 @@ TEST_CASE("Double subscription", "[urx]") {
 class StrToInt : public Observable<int>, public Observer<const char *> {
 public:
     void on_next(const char *const &value) override {
-        next(atoi(value));
+        emit(atoi(value));
     }
 
 public:
@@ -80,7 +80,7 @@ TEST_CASE("Test type change", "[urx]") {
 
     src >> str2int >> dst;
 
-    src.next("54");
+    src.emit("54");
     REQUIRE(dst.last == 54);
 }
 
