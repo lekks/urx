@@ -55,7 +55,7 @@ namespace urx {
     };
 
     template<int SIZE, typename T>
-    using FifoBuffer = BasicFifoBuffer<SIZE, T, RingBuffer<SIZE, T>>;
+    using FifoBuffer = BasicFifoBuffer<SIZE, T, RingBuffer<SIZE, T, unsigned >>;
 };
 
 

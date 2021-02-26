@@ -20,5 +20,8 @@ set(TEST_FILES
         test_ring_buffer.cpp
         )
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 add_executable(test test.cpp ${TEST_FILES})
-target_link_libraries(test PRIVATE Catch2::Catch2 urx)
+target_link_libraries(test PRIVATE Catch2::Catch2 Threads::Threads urx)

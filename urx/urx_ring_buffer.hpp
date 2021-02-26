@@ -10,11 +10,11 @@
 
 namespace urx {
 
-    template<int SIZE, typename T>
+    template<int SIZE, typename T, typename AtomicIndex>
     class RingBuffer {
         T buffer[SIZE + 1];
-        volatile unsigned write_index;
-        volatile unsigned read_index;
+        AtomicIndex write_index;
+        AtomicIndex read_index;
 
         inline unsigned next(unsigned n) const {
             if (n == SIZE) return 0;

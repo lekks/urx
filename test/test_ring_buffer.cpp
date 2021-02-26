@@ -5,12 +5,15 @@
 #include <catch2/catch.hpp>
 #include <urx_ring_buffer.hpp>
 #include <cstdlib>
+#include <thread>
+#include <atomic>
+
 
 using namespace urx;
 
 
 TEST_CASE("Test ring buffer size 1", "[urx]") {
-    RingBuffer<1, int> buf;
+    RingBuffer<1, int, unsigned> buf;
     int val;
     for (int i = 0; i < 7; i++) {
         REQUIRE(buf.is_empty());
@@ -24,7 +27,7 @@ TEST_CASE("Test ring buffer size 1", "[urx]") {
 
 
 TEST_CASE("Test ring buffer size 2", "[urx]") {
-    RingBuffer<2, int> buf;
+    RingBuffer<2, int, unsigned> buf;
     int val;
     for (int j = 0; j < 7; ++j) {
         REQUIRE(buf.is_empty());
@@ -50,7 +53,8 @@ TEST_CASE("Test ring buffer size 2", "[urx]") {
 
 
 TEMPLATE_TEST_CASE("Test ring buffer different sizes", "[urx]",
-                   (RingBuffer<1, int>), (RingBuffer<2, int>), (RingBuffer<11, int>), (RingBuffer<111, int>)) {
+                   (RingBuffer<1, int, unsigned>), (RingBuffer<2, int, unsigned>), (RingBuffer<11, int, unsigned>),
+                   (RingBuffer<111, int, unsigned>)) {
 
     int count = 101;
     TestType buf;
@@ -82,4 +86,39 @@ TEMPLATE_TEST_CASE("Test ring buffer different sizes", "[urx]",
         REQUIRE_FALSE(buf.get(&t));
         REQUIRE(buf.is_empty());
     }
+}
+
+
+using TestingBuffer = RingBuffer<123, int, unsigned long long int>;
+
+void producer_func(TestingBuffer &buf) {
+    for (int i = 0; i < 1000000; ++i) {
+        while (!buf.put(i));
+    }
+    buf.put(-1);
+}
+
+void consumer_func(TestingBuffer &buf, bool* result) {
+    int val=0;
+    int counter=0;
+    for(;;) {
+        while (!buf.get(&val));
+        if(val == -1) {
+            return;
+        } else if (val != counter++) {
+            *result = false;
+            printf("%i ",val);
+        }
+    }
+}
+
+TEST_CASE("Test buffer thread safety", "[urx]") {
+    TestingBuffer buf;
+
+    bool result_correct = true;
+    std::thread producer_thr(producer_func, std::ref(buf));
+    std::thread consumer_thr(consumer_func, std::ref(buf), &result_correct);
+    producer_thr.join();
+    consumer_thr.join();
+    REQUIRE(result_correct);
 }
