@@ -89,7 +89,7 @@ TEMPLATE_TEST_CASE("Test ring buffer different sizes", "[urx]",
 }
 
 
-using TestingBuffer = RingBuffer<123, int, unsigned long long int>;
+using TestingBuffer = RingBuffer<123, int, std::atomic_uint_least32_t>;
 
 void producer_func(TestingBuffer &buf) {
     for (int i = 0; i < 1000000; ++i) {

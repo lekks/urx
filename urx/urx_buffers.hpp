@@ -54,8 +54,8 @@ namespace urx {
         int get_size() const { return SIZE; }
     };
 
-    template<int SIZE, typename T>
-    using FifoBuffer = BasicFifoBuffer<SIZE, T, RingBuffer<SIZE, T, unsigned >>;
+    template<int SIZE, typename Data, typename AtomicIndex=unsigned int>
+    using FifoBuffer = BasicFifoBuffer<SIZE, Data, RingBuffer<SIZE, Data, AtomicIndex >>;
 };
 
 
