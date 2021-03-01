@@ -10,6 +10,7 @@
 #include "urx_functional.hpp"
 #include "urx_combinig.hpp"
 #include "urx_buffers.hpp"
+#include "urx_decouple.hpp"
 
 #include "urx_poc.hpp"
 
