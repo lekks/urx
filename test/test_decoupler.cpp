@@ -64,6 +64,19 @@ TEST_CASE("Test nonblocking decouple strategy ", "[urx]") {
         REQUIRE(dst.last == 2);
     }
 
+    SECTION("Drop newest") {
+        decoupler.set_strategy(DecouplerNoSpaceStrategy::DROP_NEWEST);
+        REQUIRE(decoupler.is_empty());
+        REQUIRE_FALSE(decoupler.process_one());
+        src.emit(1);
+        src.emit(2);
+        src.emit(3);
+        src.emit(4);
+        REQUIRE(dst.last == -1);
+        REQUIRE(decoupler.process_one());
+        REQUIRE(dst.last == 1);
+    }
+
     SECTION("Push oldest") {
         decoupler.set_strategy(DecouplerNoSpaceStrategy::PUSH_OLDEST);
         REQUIRE(decoupler.is_empty());
