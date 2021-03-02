@@ -71,6 +71,7 @@ TEST_CASE("Test nonblocking decouple strategy ", "[urx]") {
         src.emit(1);
         src.emit(2);
         src.emit(3);
+        REQUIRE(dst.last == -1);
         src.emit(4);
         REQUIRE(dst.last == 1);
     }
