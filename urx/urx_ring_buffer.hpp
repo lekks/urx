@@ -1,5 +1,5 @@
 ﻿/*
- * RingBuffer.h
+ * SafeRingBuffer.h
  *
  *  Created on: 06 ����� 2014 �.
  *      Author: Ldir
@@ -11,7 +11,7 @@
 namespace urx {
 
     template<int SIZE, typename T, typename AtomicIndex>
-    class RingBuffer {
+    class SafeRingBuffer {
         T buffer[SIZE + 1];
         AtomicIndex write_index;
         AtomicIndex read_index;
@@ -69,7 +69,7 @@ namespace urx {
             read_index = write_index = 0;
         }
 
-        RingBuffer() : write_index(0), read_index(0) {};
+        SafeRingBuffer() : write_index(0), read_index(0) {};
     };
 
 } /* namespace  */

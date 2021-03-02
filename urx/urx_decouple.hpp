@@ -7,49 +7,46 @@
 
 namespace urx {
 
+    enum class DecouplerNoSpaceStrategy {
+        DROP_OLDEST,
+        DROP_NEWEST,
+        PUSH_OLDEST,
+    };
+
     template<int SIZE, typename T, class BufferType>
     class BasicNonBlockingDecoupler : public Observer<T>, public Observable<T> {
-    public:
-        enum class NoSpaceStrategy {
-            DROP_OLDEST,
-            DROP_NEWEST,
-            PUSH_OLDEST,
-        };
-
     private:
         BufferType ring;
-        NoSpaceStrategy noSpaceStrategy = NoSpaceStrategy::DROP_NEWEST;
+        DecouplerNoSpaceStrategy noSpaceStrategy = DecouplerNoSpaceStrategy::DROP_NEWEST;
 
         void on_next(const T &val) override {
             if (!ring.put(val)) {
                 switch (noSpaceStrategy) {
-                    case NoSpaceStrategy::DROP_OLDEST:
+                    case DecouplerNoSpaceStrategy::DROP_OLDEST:
                         ring.pop();
                         ring.put(val);
                         break;
-                    case NoSpaceStrategy::PUSH_OLDEST:
+                    case DecouplerNoSpaceStrategy::PUSH_OLDEST:
                         process_one();
                         ring.put(val);
                         break;
-                    case NoSpaceStrategy::DROP_NEWEST:
+                    case DecouplerNoSpaceStrategy::DROP_NEWEST:
                         //No actions
                         break;
                 }
             }
         }
 
-
     public:
-
-
         using Observer<T>::Observer;
 
-        BasicNonBlockingDecoupler(NoSpaceStrategy noSpaceStrategy) : noSpaceStrategy(noSpaceStrategy) {};
+        BasicNonBlockingDecoupler(DecouplerNoSpaceStrategy noSpaceStrategy) : noSpaceStrategy(noSpaceStrategy) {};
 
         bool process_one() {
             T val;
-            if (ring.get(val)) {
+            if (ring.get(&val)) {
                 this->emit(val);
+                return true;
             } else {
                 return false;
             }
@@ -58,11 +55,14 @@ namespace urx {
         bool process_all() {
             T val;
             bool processed_something = false;
-            while (ring.get(val)) {
+            while (ring.get(&val)) {
                 this->emit(val);
+                processed_something = true;
             }
             return processed_something;
         }
+
+        void set_strategy(DecouplerNoSpaceStrategy strategy) { noSpaceStrategy = strategy; };
 
         inline bool is_empty() const { return ring.is_empty(); }
 
@@ -70,8 +70,7 @@ namespace urx {
     };
 
     template<int SIZE, typename Data, typename AtomicIndex=unsigned int>
-
-    using NonBlockingDecoupler = BasicNonBlockingDecoupler<SIZE, Data, RingBuffer < SIZE, Data, AtomicIndex >>;
+    using NonBlockingDecoupler = BasicNonBlockingDecoupler<SIZE, Data, SafeRingBuffer < SIZE, Data, AtomicIndex >>;
 
 }
 

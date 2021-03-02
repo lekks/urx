@@ -55,7 +55,7 @@ namespace urx {
     };
 
     template<int SIZE, typename Data, typename AtomicIndex=unsigned int>
-    using FifoBuffer = BasicFifoBuffer<SIZE, Data, RingBuffer<SIZE, Data, AtomicIndex >>;
+    using FifoBuffer = BasicFifoBuffer<SIZE, Data, SafeRingBuffer<SIZE, Data, AtomicIndex >>;
 };
 
 

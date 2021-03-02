@@ -18,6 +18,7 @@ set(TEST_FILES
         test_combining.cpp
         test_buffers.cpp
         test_ring_buffer.cpp
+        test_decoupler.cpp
         )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

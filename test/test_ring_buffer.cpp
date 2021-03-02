@@ -13,7 +13,7 @@ using namespace urx;
 
 
 TEST_CASE("Test ring buffer size 1", "[urx]") {
-    RingBuffer<1, int, unsigned> buf;
+    SafeRingBuffer<1, int, unsigned> buf;
     int val;
     for (int i = 0; i < 7; i++) {
         REQUIRE(buf.is_empty());
@@ -27,7 +27,7 @@ TEST_CASE("Test ring buffer size 1", "[urx]") {
 
 
 TEST_CASE("Test ring buffer size 2", "[urx]") {
-    RingBuffer<2, int, unsigned> buf;
+    SafeRingBuffer<2, int, unsigned> buf;
     int val;
     for (int j = 0; j < 7; ++j) {
         REQUIRE(buf.is_empty());
@@ -53,8 +53,8 @@ TEST_CASE("Test ring buffer size 2", "[urx]") {
 
 
 TEMPLATE_TEST_CASE("Test ring buffer different sizes", "[urx]",
-                   (RingBuffer<1, int, unsigned>), (RingBuffer<2, int, unsigned>), (RingBuffer<11, int, unsigned>),
-                   (RingBuffer<111, int, unsigned>)) {
+                   (SafeRingBuffer<1, int, unsigned>), (SafeRingBuffer<2, int, unsigned>), (SafeRingBuffer<11, int, unsigned>),
+                   (SafeRingBuffer<111, int, unsigned>)) {
 
     int count = 101;
     TestType buf;
@@ -89,13 +89,13 @@ TEMPLATE_TEST_CASE("Test ring buffer different sizes", "[urx]",
 }
 
 
-using TestingBuffer = RingBuffer<123, int, std::atomic_uint_least32_t>;
+using TestingBuffer = SafeRingBuffer<123, int, std::atomic_uint_least32_t>;
 
 void producer_func(TestingBuffer &buf) {
     for (int i = 0; i < 1000000; ++i) {
         while (!buf.put(i));
     }
-    buf.put(-1);
+    while (!buf.put(-1));
 }
 
 void consumer_func(TestingBuffer &buf, bool* result) {
