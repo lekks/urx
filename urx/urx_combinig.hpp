@@ -14,7 +14,7 @@ namespace urx {
 
         class MergeInput : public urx::Observer<T...> {
             void on_next(const T &...val) override {
-                output->emit(val...);
+                output->next(val...);
             }
 
         public:

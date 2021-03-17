@@ -12,7 +12,7 @@ using namespace urx;
 TEST_CASE("No connection", "[urx]") {
     Observable<int> out;
     LastValue<int> in;
-    out.emit(5);
+    out.next(5);
     REQUIRE(in.last == -1);
     REQUIRE(in.is_connected() == false);
 }
@@ -23,10 +23,10 @@ TEST_CASE("Pass value to subscribers", "[urx]") {
     CounterValue<int> in2;
     out.subscribe(in1);
     out.subscribe(in2);
-    out.emit(5);
+    out.next(5);
     REQUIRE(in1.last == 5);
     REQUIRE(in2.counter == 1);
-    out.emit(6);
+    out.next(6);
     REQUIRE(in1.last == 6);
     REQUIRE(in2.counter == 2);
 }
@@ -36,7 +36,7 @@ template<typename ...T>
 class Link : public Observer<T...>, public Observable<T...> {
 public:
     void on_next(const T &...value) override {
-        this->emit(value...);
+        this->next(value...);
     };
 };
 
@@ -45,7 +45,7 @@ TEST_CASE("Chain operator values", "[urx]") {
     Link<int> subj;
     LastValue<int> reg;
     src | subj | reg;
-    src.emit(321);
+    src.next(321);
     REQUIRE(reg.last == 321);
 }
 
@@ -54,9 +54,9 @@ TEST_CASE("Chain operator events", "[urx]") {
     Link<> subj;
     CounterValue<> in;
     out >> subj >> in;
-    out.emit();
+    out.next();
     REQUIRE(in.counter == 1);
-    out.emit();
+    out.next();
     REQUIRE(in.counter == 2);
 }
 
@@ -65,25 +65,25 @@ TEST_CASE("Resubscribe subscription", "[urx]") {
     Observable<int> src2;
     LastValue<int> dst;
     src1.subscribe(dst);
-    src1.emit(1);
+    src1.next(1);
     REQUIRE(dst.last == 1);
     src1.unsubscribe(dst);
-    src1.emit(2);
+    src1.next(2);
     REQUIRE(dst.last == 1);
     src1.subscribe(dst);
-    src1.emit(3);
+    src1.next(3);
     REQUIRE(dst.last == 3);
     src2.subscribe(dst);
-    src1.emit(5);
+    src1.next(5);
     REQUIRE(dst.last == 3);
-    src2.emit(6);
+    src2.next(6);
     REQUIRE(dst.last == 6);
 }
 
 class StrToInt : public Observable<int>, public Observer<const char *> {
 public:
     void on_next(const char *const &value) override {
-        emit(atoi(value));
+        next(atoi(value));
     }
 
 public:
@@ -96,7 +96,7 @@ TEST_CASE("Test type change", "[urx]") {
 
     src >> str2int >> dst;
 
-    src.emit("54");
+    src.next("54");
     REQUIRE(dst.last == 54);
 }
 

@@ -45,7 +45,7 @@ namespace urx {
         bool process_one() {
             T val;
             if (ring.get(&val)) {
-                this->emit(val);
+                this->next(val);
                 return true;
             } else {
                 return false;
@@ -56,7 +56,7 @@ namespace urx {
             T val;
             bool processed_something = false;
             while (ring.get(&val)) {
-                this->emit(val);
+                this->next(val);
                 processed_something = true;
             }
             return processed_something;

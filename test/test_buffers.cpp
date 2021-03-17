@@ -17,9 +17,9 @@ TEST_CASE("LastBuffer buffer ", "[urx]") {
     src >> last_value;
 
     REQUIRE(last_value.get_last() == 42);
-    src.emit(1);
+    src.next(1);
     REQUIRE(last_value.get_last() == 1);
-    src.emit(2);
+    src.next(2);
     REQUIRE(last_value.get_last() == 2);
 }
 
@@ -31,10 +31,10 @@ TEST_CASE("Test fifo buffer", "[urx]") {
     int val;
     for (int i = 0; i < 17; ++i) {
         REQUIRE(fifo.is_empty());
-        src.emit(i);
+        src.next(i);
         REQUIRE_FALSE(fifo.is_empty());
-        src.emit(i + 1);
-        src.emit(i + 2);
+        src.next(i + 1);
+        src.next(i + 2);
         REQUIRE(*fifo.front() == i);
         REQUIRE((fifo.take(&val) && val == i));
         REQUIRE((fifo.take(&val) && val == i+1));

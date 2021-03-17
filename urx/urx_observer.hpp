@@ -22,7 +22,7 @@ namespace urx {
             observable.subscribe(*this);
         }
 
-        inline void next(const T&...value) {
+        inline void call_on_next(const T&...value) {
             on_next(value...);
         }
 
@@ -49,9 +49,9 @@ namespace urx {
             observers.remove_listeners(&observer);
         };
 
-        void emit(const T &...value) {
+        void next(const T &...value) {
             for (ObserverBase *conn = observers.get_first_listener(); conn; conn = ObserversList::next_conn(conn)) {
-                static_cast<Observer<T...> *>(conn)->next(value...);
+                static_cast<Observer<T...> *>(conn)->call_on_next(value...);
             }
         };
 
