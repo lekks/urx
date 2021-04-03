@@ -10,7 +10,7 @@ namespace urx {
         friend class ObserversList;
 
         ObserverBase *next_listener = nullptr;
-        ObserversList *listeners = nullptr;
+        ObserversList *observable = nullptr;
     public:
         ObserverBase &operator=(ObserverBase &) = delete;
 
@@ -23,7 +23,7 @@ namespace urx {
         virtual ~ObserverBase() = default;
 
         bool is_connected() {
-            return listeners != nullptr;
+            return observable != nullptr;
         };
     };
 
@@ -43,7 +43,7 @@ namespace urx {
                 if (dst == listener) {
                     dst = listener->next_listener;
                     listener->next_listener = nullptr;
-                    listener->listeners = nullptr;
+                    listener->observable = nullptr;
                 } else {
                     remove_listener(dst->next_listener, listener);
                 }
@@ -53,7 +53,7 @@ namespace urx {
         ObserversList() : first_listener(nullptr) {};
 
         ~ObserversList() {
-            //TODO remove_all_listeners();
+            remove_all_listeners();
         };
 
         inline ObserverBase *get_first_listener() const {
@@ -65,17 +65,21 @@ namespace urx {
         }
 
         void add_listener(ObserverBase *listener) {
-            if (listener->listeners)
-                listener->listeners->remove_listeners(listener);
+            if (listener->observable)
+                listener->observable->remove_listener(listener);
             add_listener(first_listener, listener);
-            listener->listeners = this;
+            listener->observable = this;
         };
 
-        void remove_listeners(ObserverBase *listener) {
+        void remove_listener(ObserverBase *listener) {
             remove_listener(first_listener, listener);
         };
 
-        // TODO void remove_all_listeners() {}
+        void remove_all_listeners() {
+            while (ObserverBase *listener = get_first_listener()) {
+                remove_listener(first_listener, listener);
+            }
+        }
     };
 
 }

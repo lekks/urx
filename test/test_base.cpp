@@ -80,6 +80,26 @@ TEST_CASE("Resubscribe subscription", "[urx]") {
     REQUIRE(dst.last == 6);
 }
 
+TEST_CASE("Unsubscribe all subscription", "[urx]") {
+    Observable<int> out;
+    LastValue<int> in1;
+    CounterValue<int> in2;
+    out.subscribe(in1);
+    out.subscribe(in2);
+    REQUIRE(in1.is_connected());
+    REQUIRE(in2.is_connected());
+    out.next(5);
+    REQUIRE(in1.last == 5);
+    REQUIRE(in2.counter == 1);
+    out.unsubscribe_all();
+    REQUIRE_FALSE(in1.is_connected());
+    REQUIRE_FALSE(in2.is_connected());
+    out.next(6);
+    REQUIRE(in1.last == 5);
+    REQUIRE(in2.counter == 1);
+}
+
+
 class StrToInt : public Observable<int>, public Observer<const char *> {
 public:
     void on_next(const char *const &value) override {
