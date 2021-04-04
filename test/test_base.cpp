@@ -99,6 +99,21 @@ TEST_CASE("Unsubscribe all subscription", "[urx]") {
     REQUIRE(in2.counter == 1);
 }
 
+TEST_CASE("Unsubscribe on destructor", "[urx]") {
+    LastValue<int> in1;
+    CounterValue<int> in2;
+    {
+        Observable<int> out;
+        out.subscribe(in1);
+        out.subscribe(in2);
+        REQUIRE(in1.is_connected());
+        REQUIRE(in2.is_connected());
+    }
+    REQUIRE_FALSE(in1.is_connected());
+    REQUIRE_FALSE(in2.is_connected());
+}
+
+
 
 class StrToInt : public Observable<int>, public Observer<const char *> {
 public:
