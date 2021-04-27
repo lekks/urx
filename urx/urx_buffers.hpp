@@ -23,7 +23,7 @@ namespace urx {
 
         LastBuffer() = default;
 
-        LastBuffer(const T &initial) : last(initial) {};
+        explicit LastBuffer(const T &initial) : last(initial) {};
 
         inline const T &get_last() const {
             return last;

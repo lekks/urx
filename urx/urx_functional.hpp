@@ -20,7 +20,7 @@ namespace urx {
         }
 
     public:
-        Filter(F func) : predicate(func) {};
+        explicit Filter(F func) : predicate(func) {};
 
     };
 
@@ -38,7 +38,7 @@ namespace urx {
         }
 
     public:
-        Map(F func) : function(func) {};
+        explicit Map(F func) : function(func) {};
 
     };
 
@@ -80,7 +80,7 @@ namespace urx {
         }
 
     public:
-        Function(F func) : function(func) {};
+        explicit Function(F func) : function(func) {};
 
     };
 

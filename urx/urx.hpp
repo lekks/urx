@@ -11,6 +11,7 @@
 #include "urx_combinig.hpp"
 #include "urx_buffers.hpp"
 #include "urx_decouple.hpp"
+#include "urx_dsp.hpp"
 
 #include "urx_poc.hpp"
 

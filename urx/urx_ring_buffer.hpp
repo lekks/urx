@@ -74,4 +74,4 @@ namespace urx {
 
 } /* namespace  */
 
-#endif /* RINGBUFFER_H_ */
+#endif /* URXLIB_RINGBUFFER_HPP_ */

@@ -40,7 +40,7 @@ namespace urx {
     public:
         using Observer<T>::Observer;
 
-        BasicNonBlockingDecoupler(DecouplerNoSpaceStrategy noSpaceStrategy) : noSpaceStrategy(noSpaceStrategy) {};
+        explicit BasicNonBlockingDecoupler(DecouplerNoSpaceStrategy noSpaceStrategy) : noSpaceStrategy(noSpaceStrategy) {};
 
         bool process_one() {
             T val;

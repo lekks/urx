@@ -19,6 +19,7 @@ set(TEST_FILES
         test_buffers.cpp
         test_ring_buffer.cpp
         test_decoupler.cpp
+        test_dsp.cpp
         )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
