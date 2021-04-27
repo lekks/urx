@@ -53,7 +53,7 @@ namespace urx {
             observers.remove_all_listeners();
         }
 
-        void next(const T &...value) {
+        void next(const T &...value) const {
             for (ObserverBase *conn = observers.get_first_listener(); conn; conn = ObserversList::next_conn(conn)) {
                 static_cast<Observer<T...> *>(conn)->call_on_next(value...);
             }
