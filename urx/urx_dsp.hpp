@@ -31,11 +31,8 @@ namespace urx {
         T last;
 
         void on_next(const T &value) override {
-            if (!is_set) {
+            if (!is_set || last != value) {
                 is_set = true;
-                last = value;
-                this->next(value);
-            } else if (last != value) {
                 last = value;
                 this->next(value);
             }
