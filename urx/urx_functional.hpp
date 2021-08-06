@@ -81,12 +81,18 @@ namespace urx {
 
     public:
         explicit Function(F func) : function(func) {};
+        Function(Observable<S...> &observable, F func) : Observer<S...>(observable), function(func) {};
 
     };
 
     template<typename ...S, typename F>
     Function<F, S...> make_function(F &&func) {
         return Function<F, S...>(func);
+    }
+
+    template<typename ...S, typename F>
+    Function<F, S...> make_function(Observable<S...> &observable, F &&func) {
+        return Function<F, S...>(observable, func);
     }
 
 }

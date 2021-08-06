@@ -121,3 +121,16 @@ TEST_CASE("Test function no arguments", "[urx]") {
     src.next();
     REQUIRE(counter == 2);
 }
+
+TEST_CASE("Test function subscribe in ctor", "[urx]") {
+
+    int accum = 0;
+    Observable<int, int> src;
+    auto func = make_function<int, int>(src, [&accum](const int &a, const int &b) { accum += a + b; });
+
+    src.next(2, 3);
+    REQUIRE(accum == 5);
+
+    src.next(7, 9);
+    REQUIRE(accum == 21);
+}
