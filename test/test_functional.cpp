@@ -56,12 +56,43 @@ TEST_CASE("Test filter 2 arguments", "[urx]") {
     REQUIRE(cnt.counter == 2);
 }
 
+
+TEST_CASE("Test filter subscribe in ctor", "[urx]") {
+    Observable<int, int> src;
+    auto filter = make_filter<int, int>([](const int &a, const int &b) -> bool { return a % b == 0; }, src);
+    CounterValue<int, int> cnt(filter);
+
+    src.next(1, 2);
+    REQUIRE(cnt.counter == 0);
+
+    src.next(2, 1);
+    REQUIRE(cnt.counter == 1);
+
+    src.next(3, 2);
+    REQUIRE(cnt.counter == 1);
+
+    src.next(4, 2);
+    REQUIRE(cnt.counter == 2);
+}
+
 TEST_CASE("Test map", "[urx]") {
     Observable<const char *, bool> src;
     LastValue<int> dst;
     auto map = make_map<int, const char *, bool>(
             [](const char *const &value, const bool &flag) -> int { return flag ? atoi(value) : -1; });
     src >> map >> dst;
+
+    src.next("54", true);
+    REQUIRE(dst.last == 54);
+    src.next("55", false);
+    REQUIRE(dst.last == -1);
+}
+
+TEST_CASE("Test map subscribe in ctor", "[urx]") {
+    Observable<const char *, bool> src;
+    auto map = make_map<int, const char *, bool>(
+            [](const char *const &value, const bool &flag) -> int { return flag ? atoi(value) : -1; }, src);
+    LastValue<int> dst(map);
 
     src.next("54", true);
     REQUIRE(dst.last == 54);
@@ -80,6 +111,30 @@ TEST_CASE("Test reduce", "[urx]") {
             13
     );
     src >> reduce >> dst;
+
+    src.next(0.5, true);
+    REQUIRE(dst.last == 14);
+
+    src.next(8.5, false);
+    REQUIRE(dst.last == 22);
+
+    src.next(5.7, true);
+    REQUIRE(dst.last == 28);
+
+    REQUIRE(reduce.get() == 28);
+}
+
+
+TEST_CASE("Test reduce subscribe ctor", "[urx]") {
+    Observable<float, bool> src;
+    auto reduce = make_reduce<int, float, bool>(
+            [](const int &accumulator, const float &value, const bool &flag) -> int {
+                return accumulator + value + (flag ? 1 : 0);
+            },
+            13,
+            src
+    );
+    LastValue<int> dst(reduce);
 
     src.next(0.5, true);
     REQUIRE(dst.last == 14);
@@ -120,4 +175,17 @@ TEST_CASE("Test function no arguments", "[urx]") {
 
     src.next();
     REQUIRE(counter == 2);
+}
+
+TEST_CASE("Test function subscribe in ctor", "[urx]") {
+
+    int accum = 0;
+    Observable<int, int> src;
+    auto func = make_function<int, int>([&accum](const int &a, const int &b) { accum += a + b; }, src);
+
+    src.next(2, 3);
+    REQUIRE(accum == 5);
+
+    src.next(7, 9);
+    REQUIRE(accum == 21);
 }
